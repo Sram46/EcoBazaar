@@ -1,3 +1,29 @@
+// Function to add a new product
+document.getElementById('product-form')?.addEventListener('submit', function(event) {
+    event.preventDefault();
+  
+    const title = document.getElementById('title').value;
+    const description = document.getElementById('description').value;
+    const price = document.getElementById('price').value;
+    const category = document.getElementById('category').value;
+    const imageFile = document.getElementById('image').files[0];
+  
+    const reader = new FileReader();
+    reader.onload = function() {
+      const image = reader.result;
+  
+      const newProduct = { title, description, price, category, image };
+      const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
+      storedProducts.push(newProduct);
+  
+      localStorage.setItem('products', JSON.stringify(storedProducts));
+      alert('Product added successfully!');
+      window.location.href = 'index.html'; // Redirect to home page
+    };
+  
+    reader.readAsDataURL(imageFile);
+  });
+  
 document.addEventListener("DOMContentLoaded", function() {
     const productList = document.getElementById('product-list');
     const storedProducts = JSON.parse(localStorage.getItem('products')) || [];
@@ -9,16 +35,17 @@ document.addEventListener("DOMContentLoaded", function() {
         <img src="${product.image}" alt="${product.title}">
         <h3>${product.title}</h3>
         <p>${product.description}</p>
-        <p><strong>Price:</strong> $${product.price}</p>
+        <p><strong>Price:</strong> ₹${product.price}</p>
         <p><strong>Category:</strong> ${product.category}</p>
-        <label for="quantity">Quantity:</label>
-        <input type="number" min="1" max="${product.quantity}" value="1" id="quantity-${product.title}">
-        <button onclick="addToCart('${product.title}', ${product.price}, ${product.quantity})">Add to Cart</button>
+        <label for="quantity-${product.title}">Quantity:</label>
+        <input type="number" id="quantity-${product.title}" class="quantity-input" min="1" value="1">
+        <button onclick="addToCart('${product.title}', ${product.price})">Add to Cart</button>
         <button onclick="buyNow('${product.title}', ${product.price})">Buy Now</button>
       `;
       productList.appendChild(productCard);
     });
   });
+  
   
   // Add to cart function
   function addToCart(title, price, availableQuantity) {
